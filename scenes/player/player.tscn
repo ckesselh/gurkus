@@ -36,7 +36,6 @@ position_smoothing_enabled = true
 [node name="CooldownUI" type="CanvasLayer" parent="."]
 
 [node name="Background" type="ColorRect" parent="CooldownUI"]
-visible = false
 offset_left = 20.0
 offset_top = 20.0
 offset_right = 104.0
@@ -44,17 +43,16 @@ offset_bottom = 34.0
 color = Color(0.2, 0.2, 0.2, 0.6)
 
 [node name="Bar" type="ColorRect" parent="CooldownUI"]
-visible = false
 offset_left = 22.0
 offset_top = 22.0
-offset_right = 22.0
+offset_right = 102.0
 offset_bottom = 32.0
 color = Color(1, 0.5, 0, 0.9)
 
 [node name="Label" type="Label" parent="CooldownUI"]
 offset_left = 108.0
 offset_top = 18.0
-offset_right = 230.0
+offset_right = 280.0
 offset_bottom = 36.0
 theme_override_font_sizes/font_size = 14
-text = "Fireball [Enter]"
+text = "Feuerball [Eingabe]"

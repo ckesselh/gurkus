@@ -1,49 +1,97 @@
 extends CharacterBody2D
 
-const SPEED := 200.0
-const JUMP_VELOCITY := -350.0
-const GRAVITY := 800.0
+# Movement
+const SPEED_MAX := 250.0
+const ACCEL_FLOOR := 1200.0
+const ACCEL_AIR := 600.0
+const FRICTION_FLOOR := 800.0
+const FRICTION_AIR := 200.0
+
+# Jump — scales with horizontal speed
+const JUMP_BASE := -300.0
+const JUMP_MOMENTUM_BONUS := -120.0
+const GRAVITY := 900.0
+const GRAVITY_FALL := 1400.0
+const JUMP_SLOWFALL := -3.0
+
+# Coyote time & jump buffer
+const COYOTE_TIME := 0.1
+const JUMP_BUFFER_TIME := 0.12
 
 const FIREBALL_COOLDOWN := 15.0
 const SHOOT_ANIM_FPS := 20.0
 const SHOOT_FRAME_COUNT := 30
 const SHOOT_SPAWN_FRAME := 15
 
-const FireballScene := preload("res://scenes/player/fireball.tscn")
+const ANIM_FPS := 10.0
 
-@onready var walk_sprite: Sprite2D = $WalkSprite
-@onready var shoot_sprite: Sprite2D = $ShootSprite
-@onready var cooldown_bar: ColorRect = $CooldownUI/Bar
-@onready var cooldown_bg: ColorRect = $CooldownUI/Background
+const FireballScene := preload("res://scenes/player/fireball.tscn")
 
 var _anim_frame := 0
 var _anim_timer := 0.0
-const ANIM_FPS := 10.0
-
 var _cooldown_remaining := 0.0
 var _is_shooting := false
 var _shoot_frame := 0
 var _shoot_timer := 0.0
 var _fireball_spawned := false
 var _facing_right := true
+var _coyote_timer := 0.0
+var _jump_buffer_timer := 0.0
+var _was_on_floor := false
+var _is_jumping := false
+
+@onready var walk_sprite: Sprite2D = $WalkSprite
+@onready var shoot_sprite: Sprite2D = $ShootSprite
+@onready var cooldown_bar: ColorRect = $CooldownUI/Bar
+@onready var cooldown_bg: ColorRect = $CooldownUI/Background
 
 
 func _physics_process(delta: float) -> void:
-	# Gravity
-	if not is_on_floor():
-		velocity.y += GRAVITY * delta
+	var on_floor := is_on_floor()
 
-	# Jump
-	if Input.is_action_just_pressed("jump") and is_on_floor():
-		velocity.y = JUMP_VELOCITY
+	# Coyote time: allow jumping briefly after leaving a ledge
+	if on_floor:
+		_coyote_timer = COYOTE_TIME
+	else:
+		_coyote_timer -= delta
 
-	# Horizontal movement
+	# Jump buffer: remember jump press for a short window
+	if Input.is_action_just_pressed("jump"):
+		_jump_buffer_timer = JUMP_BUFFER_TIME
+	else:
+		_jump_buffer_timer -= delta
+
+	# Gravity — heavier when falling for snappier feel
+	if not on_floor:
+		var grav := GRAVITY if velocity.y < 0 and Input.is_action_pressed("jump") else GRAVITY_FALL
+		velocity.y += grav * delta
+
+	# Slowfall while holding jump and ascending
+	if Input.is_action_pressed("jump") and velocity.y < 0:
+		velocity.y += JUMP_SLOWFALL
+
+	# Jump — stronger with more horizontal speed
+	var can_jump := _coyote_timer > 0 and _jump_buffer_timer > 0
+	if can_jump:
+		var speed_ratio := absf(velocity.x) / SPEED_MAX
+		velocity.y = JUMP_BASE + JUMP_MOMENTUM_BONUS * speed_ratio
+		_coyote_timer = 0.0
+		_jump_buffer_timer = 0.0
+		_is_jumping = true
+
+	if on_floor and velocity.y >= 0:
+		_is_jumping = false
+
+	# Horizontal movement with acceleration
 	var direction := Input.get_axis("move_left", "move_right")
 	if direction:
-		velocity.x = direction * SPEED
+		var accel := ACCEL_FLOOR if on_floor else ACCEL_AIR
+		velocity.x = move_toward(velocity.x, direction * SPEED_MAX, accel * delta)
 	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
+		var friction := FRICTION_FLOOR if on_floor else FRICTION_AIR
+		velocity.x = move_toward(velocity.x, 0, friction * delta)
 
+	_was_on_floor = on_floor
 	move_and_slide()
 
 	# Shooting
@@ -128,10 +176,9 @@ func _spawn_fireball() -> void:
 
 func _update_cooldown_ui() -> void:
 	if _cooldown_remaining > 0:
-		cooldown_bg.visible = true
-		cooldown_bar.visible = true
 		var ratio := _cooldown_remaining / FIREBALL_COOLDOWN
 		cooldown_bar.size.x = 80.0 * (1.0 - ratio)
+		cooldown_bar.color = Color(0.5, 0.5, 0.5, 0.6)
 	else:
-		cooldown_bg.visible = false
-		cooldown_bar.visible = false
+		cooldown_bar.size.x = 80.0
+		cooldown_bar.color = Color(1.0, 0.5, 0.0, 0.9)

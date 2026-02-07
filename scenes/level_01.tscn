@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=4 uid="uid://cm131qr0vtd07"]
 
 [ext_resource type="TileSet" uid="uid://b1ioqk7roxc" path="res://resources/tilesets/landscape.tres" id="1_bpt1m"]
-[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" uid="uid://m22hywvjl6" path="res://scenes/player/player.tscn" id="2_player"]
 [ext_resource type="Script" uid="uid://bdxslgeel8t3g" path="res://scripts/levels/level_01.gd" id="3_level"]
 
 [sub_resource type="RectangleShape2D" id="DeathShape"]
@@ -14,7 +14,7 @@ size = Vector2(64, 241)
 script = ExtResource("3_level")
 
 [node name="Player" parent="." instance=ExtResource("2_player")]
-position = Vector2(49, 645)
+position = Vector2(35, 581)
 
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
 position = Vector2(278, -430)
@@ -36,3 +36,4 @@ collision_layer = 0
 [node name="CollisionShape2D" type="CollisionShape2D" parent="GoalZone"]
 position = Vector2(34, -179.5)
 shape = SubResource("GoalShape")
+
