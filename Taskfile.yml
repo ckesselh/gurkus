@@ -1,0 +1,48 @@
+version: '3'
+
+tasks:
+  precommit:
+    desc: Pre-commit checks (for husky or manual use)
+    cmds:
+      - task: parse
+      - task: lint
+      - task: format-check
+
+  check:
+    desc: Run all checks
+    deps: [parse, lint]
+
+  parse:
+    desc: Validate GDScript syntax
+    cmds:
+      - gdparse scripts/**/*.gd
+
+  lint:
+    desc: Lint GDScript files
+    cmds:
+      - gdlint scripts/**/*.gd
+
+  format:
+    desc: Auto-format GDScript
+    cmds:
+      - gdformat scripts/**/*.gd
+
+  format-check:
+    desc: Check formatting without changes
+    cmds:
+      - gdformat --check scripts/**/*.gd
+
+  validate:
+    desc: Validate Godot project imports
+    cmds:
+      - godot4 --headless --path . --import --quit
+
+  run:
+    desc: Run the game
+    cmds:
+      - godot4 --path .
+
+  editor:
+    desc: Open in Godot editor
+    cmds:
+      - godot4 --editor --path .
