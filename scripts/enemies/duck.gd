@@ -55,4 +55,4 @@ func _check_player_collision() -> void:
 
 
 func die() -> void:
-	queue_free()
+	call_deferred("queue_free")

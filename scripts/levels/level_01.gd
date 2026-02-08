@@ -8,7 +8,7 @@ func _ready() -> void:
 
 func _on_death_zone_entered(body: Node2D) -> void:
 	if body.name == "Player":
-		get_tree().reload_current_scene()
+		get_tree().call_deferred("reload_current_scene")
 
 
 func _on_goal_zone_entered(body: Node2D) -> void:

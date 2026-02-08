@@ -250,7 +250,7 @@ func _take_damage(enemy: CharacterBody2D) -> void:
 		return
 	_hp -= 1
 	if _hp <= 0:
-		get_tree().reload_current_scene()
+		get_tree().call_deferred("reload_current_scene")
 		return
 	_invincible_timer = INVINCIBILITY_TIME
 	var away: float = signf(global_position.x - enemy.global_position.x)

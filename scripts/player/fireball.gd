@@ -15,7 +15,7 @@ func _physics_process(delta: float) -> void:
 	position.x += SPEED * direction * delta
 	_age += delta
 	if _age >= LIFETIME:
-		queue_free()
+		call_deferred("queue_free")
 
 
 func _draw() -> void:
@@ -30,4 +30,4 @@ func _draw() -> void:
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("enemies") and body.has_method("die"):
 		body.die()
-	queue_free()
+	call_deferred("queue_free")
