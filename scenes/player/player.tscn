@@ -1,14 +1,16 @@
-[gd_scene load_steps=5 format=3 uid="uid://m22hywvjl6"]
+[gd_scene load_steps=6 format=3 uid="uid://m22hywvjl6"]
 
 [ext_resource type="Script" uid="uid://nmfisaouxdvo" path="res://scripts/player/player.gd" id="1_player"]
 [ext_resource type="Texture2D" uid="uid://d3haq0brm0xhb" path="res://assets/sprites/gurkus_walking.png" id="2_walk"]
 [ext_resource type="Texture2D" uid="uid://btkc82o18sr5e" path="res://assets/sprites/gurkus_fireball.png" id="3_shoot"]
+[ext_resource type="Texture2D" path="res://assets/sprites/gurkus_idle.png" id="4_idle"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1"]
 radius = 20.0
 height = 56.0
 
 [node name="Player" type="CharacterBody2D"]
+collision_mask = 5
 script = ExtResource("1_player")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -16,9 +18,17 @@ position = Vector2(0, -2)
 shape = SubResource("CapsuleShape2D_1")
 
 [node name="WalkSprite" type="Sprite2D" parent="."]
+visible = false
 position = Vector2(0, -8)
 scale = Vector2(0.25, 0.25)
 texture = ExtResource("2_walk")
+hframes = 6
+vframes = 6
+
+[node name="IdleSprite" type="Sprite2D" parent="."]
+position = Vector2(0, -8)
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("4_idle")
 hframes = 6
 vframes = 6
 
@@ -56,3 +66,17 @@ offset_right = 280.0
 offset_bottom = 36.0
 theme_override_font_sizes/font_size = 14
 text = "Feuerball [Eingabe]"
+
+[node name="Hearts" type="Label" parent="CooldownUI"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -200.0
+offset_top = 12.0
+offset_right = -16.0
+offset_bottom = 52.0
+grow_horizontal = 0
+theme_override_colors/font_color = Color(0.9, 0.1, 0.1, 1)
+theme_override_font_sizes/font_size = 36
+horizontal_alignment = 2
+text = "♥ ♥ ♥ "

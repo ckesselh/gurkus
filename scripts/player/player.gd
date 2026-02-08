@@ -25,6 +25,13 @@ const SHOOT_SPAWN_FRAME := 15
 
 const ANIM_FPS := 10.0
 
+# Health
+const MAX_HP := 3
+const INVINCIBILITY_TIME := 1.5
+const KNOCKBACK_HORIZONTAL := 200.0
+const KNOCKBACK_VERTICAL := -200.0
+const BLINK_SPEED := 10.0
+
 const FireballScene := preload("res://scenes/player/fireball.tscn")
 
 var _anim_frame := 0
@@ -39,11 +46,15 @@ var _coyote_timer := 0.0
 var _jump_buffer_timer := 0.0
 var _was_on_floor := false
 var _is_jumping := false
+var _hp := MAX_HP
+var _invincible_timer := 0.0
 
 @onready var walk_sprite: Sprite2D = $WalkSprite
+@onready var idle_sprite: Sprite2D = $IdleSprite
 @onready var shoot_sprite: Sprite2D = $ShootSprite
 @onready var cooldown_bar: ColorRect = $CooldownUI/Bar
 @onready var cooldown_bg: ColorRect = $CooldownUI/Background
+@onready var heart_label: Label = $CooldownUI/Hearts
 
 
 func _physics_process(delta: float) -> void:
@@ -94,6 +105,16 @@ func _physics_process(delta: float) -> void:
 	_was_on_floor = on_floor
 	move_and_slide()
 
+	_check_enemy_collisions()
+
+	# Invincibility
+	if _invincible_timer > 0:
+		_invincible_timer -= delta
+		modulate.a = 0.3 + 0.7 * absf(sin(_invincible_timer * BLINK_SPEED))
+		if _invincible_timer <= 0:
+			_invincible_timer = 0
+			modulate.a = 1.0
+
 	# Shooting
 	if Input.is_action_just_pressed("shoot") and _cooldown_remaining <= 0 and not _is_shooting:
 		_start_shooting()
@@ -109,26 +130,35 @@ func _physics_process(delta: float) -> void:
 		if _cooldown_remaining < 0:
 			_cooldown_remaining = 0
 	_update_cooldown_ui()
+	_update_heart_ui()
 
 
 func _update_animation(direction: float, delta: float) -> void:
 	if direction > 0:
-		walk_sprite.flip_h = false
 		_facing_right = true
 	elif direction < 0:
-		walk_sprite.flip_h = true
 		_facing_right = false
 
+	var flip := not _facing_right
+	walk_sprite.flip_h = flip
+	idle_sprite.flip_h = flip
+
 	if direction != 0:
+		idle_sprite.visible = false
+		walk_sprite.visible = true
 		_anim_timer += delta
 		if _anim_timer >= 1.0 / ANIM_FPS:
 			_anim_timer = 0.0
 			_anim_frame = (_anim_frame + 1) % 6
 		walk_sprite.frame = _anim_frame
 	else:
-		_anim_frame = 0
-		_anim_timer = 0.0
-		walk_sprite.frame = 0
+		walk_sprite.visible = false
+		idle_sprite.visible = true
+		_anim_timer += delta
+		if _anim_timer >= 1.0 / ANIM_FPS:
+			_anim_timer = 0.0
+			_anim_frame = (_anim_frame + 1) % 6
+		idle_sprite.frame = _anim_frame
 
 
 func _start_shooting() -> void:
@@ -137,6 +167,7 @@ func _start_shooting() -> void:
 	_shoot_timer = 0.0
 	_fireball_spawned = false
 	walk_sprite.visible = false
+	idle_sprite.visible = false
 	shoot_sprite.visible = true
 	shoot_sprite.flip_h = not _facing_right
 	shoot_sprite.frame = 0
@@ -162,7 +193,7 @@ func _update_shoot_animation(delta: float) -> void:
 func _end_shooting() -> void:
 	_is_shooting = false
 	shoot_sprite.visible = false
-	walk_sprite.visible = true
+	idle_sprite.visible = true
 	_cooldown_remaining = FIREBALL_COOLDOWN
 
 
@@ -182,3 +213,48 @@ func _update_cooldown_ui() -> void:
 	else:
 		cooldown_bar.size.x = 80.0
 		cooldown_bar.color = Color(1.0, 0.5, 0.0, 0.9)
+
+
+func _update_heart_ui() -> void:
+	heart_label.text = ""
+	for i in MAX_HP:
+		if i < MAX_HP - _hp:
+			heart_label.text += "♡ "
+		else:
+			heart_label.text += "♥ "
+
+
+func _check_enemy_collisions() -> void:
+	for i in get_slide_collision_count():
+		var collision := get_slide_collision(i)
+		var collider := collision.get_collider()
+		if collider is CharacterBody2D and collider.is_in_group("enemies"):
+			if collision.get_normal().y < -0.5:
+				_stomp(collider)
+			else:
+				_take_damage(collider)
+
+
+func _stomp(enemy: CharacterBody2D) -> void:
+	enemy.die()
+	velocity.y = JUMP_BASE
+
+
+func enemy_touched(enemy: CharacterBody2D) -> void:
+	if not enemy.is_queued_for_deletion():
+		_take_damage(enemy)
+
+
+func _take_damage(enemy: CharacterBody2D) -> void:
+	if _invincible_timer > 0 or enemy.is_queued_for_deletion():
+		return
+	_hp -= 1
+	if _hp <= 0:
+		get_tree().reload_current_scene()
+		return
+	_invincible_timer = INVINCIBILITY_TIME
+	var away: float = signf(global_position.x - enemy.global_position.x)
+	if away == 0:
+		away = 1.0
+	velocity.x = away * KNOCKBACK_HORIZONTAL
+	velocity.y = KNOCKBACK_VERTICAL

@@ -27,5 +27,7 @@ func _draw() -> void:
 	draw_circle(Vector2.ZERO, 4, Color(1.0, 1.0, 0.5, 1.0))
 
 
-func _on_body_entered(_body: Node2D) -> void:
+func _on_body_entered(body: Node2D) -> void:
+	if body.is_in_group("enemies") and body.has_method("die"):
+		body.die()
 	queue_free()

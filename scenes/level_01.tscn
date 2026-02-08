@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=4 uid="uid://cm131qr0vtd07"]
+[gd_scene load_steps=7 format=4 uid="uid://cm131qr0vtd07"]
 
 [ext_resource type="TileSet" uid="uid://b1ioqk7roxc" path="res://resources/tilesets/landscape.tres" id="1_bpt1m"]
 [ext_resource type="PackedScene" uid="uid://m22hywvjl6" path="res://scenes/player/player.tscn" id="2_player"]
 [ext_resource type="Script" uid="uid://bdxslgeel8t3g" path="res://scripts/levels/level_01.gd" id="3_level"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/duck.tscn" id="4_duck"]
 
 [sub_resource type="RectangleShape2D" id="DeathShape"]
 size = Vector2(5778, 64)
@@ -36,4 +37,13 @@ collision_layer = 0
 [node name="CollisionShape2D" type="CollisionShape2D" parent="GoalZone"]
 position = Vector2(34, -179.5)
 shape = SubResource("GoalShape")
+
+[node name="Duck1" parent="." instance=ExtResource("4_duck")]
+position = Vector2(500, 581)
+
+[node name="Duck2" parent="." instance=ExtResource("4_duck")]
+position = Vector2(900, 581)
+
+[node name="Duck3" parent="." instance=ExtResource("4_duck")]
+position = Vector2(1400, 581)
 
