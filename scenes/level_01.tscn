@@ -1,15 +1,16 @@
-[gd_scene load_steps=7 format=4 uid="uid://cm131qr0vtd07"]
+[gd_scene load_steps=8 format=4 uid="uid://cm131qr0vtd07"]
 
 [ext_resource type="TileSet" uid="uid://b1ioqk7roxc" path="res://resources/tilesets/landscape.tres" id="1_bpt1m"]
 [ext_resource type="PackedScene" uid="uid://m22hywvjl6" path="res://scenes/player/player.tscn" id="2_player"]
 [ext_resource type="Script" uid="uid://bdxslgeel8t3g" path="res://scripts/levels/level_01.gd" id="3_level"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/duck.tscn" id="4_duck"]
+[ext_resource type="Texture2D" uid="uid://dh1ixddam0qk7" path="res://assets/images/flag-red.png" id="5_flag"]
 
 [sub_resource type="RectangleShape2D" id="DeathShape"]
 size = Vector2(5778, 64)
 
 [sub_resource type="RectangleShape2D" id="GoalShape"]
-size = Vector2(64, 241)
+size = Vector2(50, 91.5)
 
 [node name="Level01" type="Node2D"]
 script = ExtResource("3_level")
@@ -35,8 +36,13 @@ position = Vector2(2300, 550)
 collision_layer = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="GoalZone"]
-position = Vector2(34, -179.5)
+position = Vector2(53, -128.25)
 shape = SubResource("GoalShape")
+
+[node name="Flag" type="Sprite2D" parent="GoalZone/CollisionShape2D"]
+position = Vector2(2, 6.25)
+scale = Vector2(2, 2)
+texture = ExtResource("5_flag")
 
 [node name="Duck1" parent="." instance=ExtResource("4_duck")]
 position = Vector2(500, 581)
@@ -46,4 +52,3 @@ position = Vector2(900, 581)
 
 [node name="Duck3" parent="." instance=ExtResource("4_duck")]
 position = Vector2(1400, 581)
-
