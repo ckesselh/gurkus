@@ -28,6 +28,6 @@ func _draw() -> void:
 
 
 func _on_body_entered(body: Node2D) -> void:
-	if body.is_in_group("enemies") and body.has_method("die"):
+	if body.has_method("die"):
 		body.die()
 	call_deferred("queue_free")

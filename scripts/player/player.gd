@@ -228,7 +228,11 @@ func _check_enemy_collisions() -> void:
 	for i in get_slide_collision_count():
 		var collision := get_slide_collision(i)
 		var collider := collision.get_collider()
-		if collider is CharacterBody2D and collider.is_in_group("enemies"):
+		if not collider is CharacterBody2D:
+			continue
+		if collider.is_in_group("tornadoes"):
+			collider._check_player_collision()
+		elif collider.is_in_group("enemies"):
 			if collision.get_normal().y < -0.5:
 				_stomp(collider)
 			else:
@@ -243,6 +247,10 @@ func _stomp(enemy: CharacterBody2D) -> void:
 func enemy_touched(enemy: CharacterBody2D) -> void:
 	if not enemy.is_queued_for_deletion():
 		_take_damage(enemy)
+
+
+func tornado_touched(launch_velocity: float) -> void:
+	velocity.y = launch_velocity
 
 
 func _take_damage(enemy: CharacterBody2D) -> void:

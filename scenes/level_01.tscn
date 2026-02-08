@@ -1,13 +1,14 @@
-[gd_scene load_steps=8 format=4 uid="uid://cm131qr0vtd07"]
+[gd_scene load_steps=9 format=4 uid="uid://cm131qr0vtd07"]
 
 [ext_resource type="TileSet" uid="uid://b1ioqk7roxc" path="res://resources/tilesets/landscape.tres" id="1_bpt1m"]
 [ext_resource type="PackedScene" uid="uid://m22hywvjl6" path="res://scenes/player/player.tscn" id="2_player"]
 [ext_resource type="Script" uid="uid://bdxslgeel8t3g" path="res://scripts/levels/level_01.gd" id="3_level"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/duck.tscn" id="4_duck"]
 [ext_resource type="Texture2D" uid="uid://dh1ixddam0qk7" path="res://assets/images/flag-red.png" id="5_flag"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/torni.tscn" id="6_torni"]
 
 [sub_resource type="RectangleShape2D" id="DeathShape"]
-size = Vector2(5778, 64)
+size = Vector2(12000, 64)
 
 [sub_resource type="RectangleShape2D" id="GoalShape"]
 size = Vector2(50, 91.5)
@@ -52,3 +53,6 @@ position = Vector2(900, 581)
 
 [node name="Duck3" parent="." instance=ExtResource("4_duck")]
 position = Vector2(1400, 581)
+
+[node name="Torni" parent="." instance=ExtResource("6_torni")]
+position = Vector2(1096, 650)
