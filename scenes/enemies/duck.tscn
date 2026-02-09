@@ -1,15 +1,13 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=4 format=3 uid="uid://dlosnxrs7fcl6"]
 
-[ext_resource type="Script" path="res://scripts/enemies/duck.gd" id="1_duck"]
-[ext_resource type="Texture2D" path="res://assets/sprites/duck_walking.png" id="2_sprite"]
+[ext_resource type="Script" uid="uid://7lbokcqp402d" path="res://scripts/enemies/duck.gd" id="1_duck"]
+[ext_resource type="Texture2D" uid="uid://b08ke4mcuhwd5" path="res://assets/sprites/duck_walking.png" id="2_sprite"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1"]
-radius = 10.0
-height = 40.0
+height = 52.0
 
 [node name="Duck" type="CharacterBody2D"]
 collision_layer = 4
-collision_mask = 1
 script = ExtResource("1_duck")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

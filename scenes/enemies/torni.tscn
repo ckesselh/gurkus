@@ -1,14 +1,13 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=4 format=3 uid="uid://bhrgrfkohhjl8"]
 
-[ext_resource type="Script" path="res://scripts/enemies/torni.gd" id="1_torni"]
-[ext_resource type="Texture2D" path="res://assets/sprites/torni_idle.png" id="2_sprite"]
+[ext_resource type="Script" uid="uid://c63cu1exgpofx" path="res://scripts/enemies/torni.gd" id="1_torni"]
+[ext_resource type="Texture2D" uid="uid://dwcneqav38xm3" path="res://assets/sprites/torni_idle.png" id="2_sprite"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_1"]
-radius = 18.0
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_dypjn"]
+height = 52.0
 
 [node name="Torni" type="CharacterBody2D"]
 collision_layer = 4
-collision_mask = 1
 script = ExtResource("1_torni")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
@@ -20,4 +19,4 @@ vframes = 6
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -4)
-shape = SubResource("CircleShape2D_1")
+shape = SubResource("CapsuleShape2D_dypjn")
